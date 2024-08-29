@@ -43,5 +43,6 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(upCmd)
+	rootCmd.AddCommand(downCmd)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 }

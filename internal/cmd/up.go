@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"bufio"
+	// "bufio"
 	"context"
 	"fmt"
-	"os"
-	"os/exec"
-	"strings"
-	"time"
+	// "os"
+	// "os/exec"
+	// "strings"
+	// "time"
 
 	"github.com/codescalersinternships/tfvpn/internal/filter"
 	"github.com/codescalersinternships/tfvpn/pkg/config"
@@ -43,30 +43,30 @@ func Up(ctx context.Context, vpnCfg config.VPNConfig) error {
 	}
 	log.Info().Str("public_ip", deployedVM.ComputedIP).Msg("vpn server deployed successfully")
 
-	fmt.Println("enter your local password to connect to the vpn server:")
-	r := bufio.NewReader(os.Stdin)
-	password, _ := r.ReadString('\n')
-	password = strings.TrimSpace(password)
-	log.Info().Msg("connecting to the vpn server...")
-	time.Sleep(30 * time.Second)
+	// fmt.Println("enter your local password to connect to the vpn server:")
+	// r := bufio.NewReader(os.Stdin)
+	// password, _ := r.ReadString('\n')
+	// password = strings.TrimSpace(password)
+	// log.Info().Msg("connecting to the vpn server...")
+	// time.Sleep(30 * time.Second)
 
-	host := strings.Split(deployedVM.ComputedIP, "/")[0]
-	if err := removeDuplicateHost(host); err != nil {
-		return err
-	}
+	// host := strings.Split(deployedVM.ComputedIP, "/")[0]
+	// if err := removeDuplicateHost(host); err != nil {
+	// 	return err
+	// }
 
-	if err := addHostToKnownHosts(host); err != nil {
-		return err
-	}
+	// if err := addHostToKnownHosts(host); err != nil {
+	// 	return err
+	// }
 
-	cmd := exec.Command("sshpass", "-p", password, "sshuttle", "-r", "root@"+host, "0.0.0.0/0")
+	// cmd := exec.Command("sshpass", "-p", password, "sshuttle", "-r", "root@"+host, "0.0.0.0/0")
 
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Error().Msgf("failed to connect to the vpn server %s output %s", err, output)
-		return fmt.Errorf("failed to connect to the vpn server %w", err)
-	}
-	log.Info().Msg("connection established successfully!")
+	// output, err := cmd.CombinedOutput()
+	// if err != nil {
+	// 	log.Error().Msgf("failed to connect to the vpn server %s output %s", err, output)
+	// 	return fmt.Errorf("failed to connect to the vpn server %w", err)
+	// }
+	// log.Info().Msg("connection established successfully!")
 
 	return nil
 }
