@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/codescalersinternships/tfvpn/internal/config"
+	"github.com/codescalersinternships/tfvpn/pkg/config"
 	"github.com/threefoldtech/tfgrid-sdk-go/grid-client/deployer"
 )
 
