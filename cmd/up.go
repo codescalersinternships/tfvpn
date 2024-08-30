@@ -40,6 +40,4 @@ func init() {
 	upCmd.PersistentFlags().StringP("region", "", "", "region to deploy the vpn server on it")
 	upCmd.PersistentFlags().StringP("country", "", "", "country to deploy the vpn server on it")
 	upCmd.PersistentFlags().StringP("city", "", "", "city to deploy the vpn server on it")
-	// still to discuss
-	// upCmd.PersistentFlags().BoolP("dns", "-d", false, "use dns of the vpn server")
 }

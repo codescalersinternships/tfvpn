@@ -11,28 +11,27 @@ import (
 	"github.com/threefoldtech/zos/pkg/gridtypes"
 )
 
-// deployVM deploys a vm on the grid
-func deployVM(ctx context.Context, client *deployer.TFPluginClient, vm workloads.VM, network *workloads.ZNet) (workloads.VM, error) {
+func deployVM(ctx context.Context, client *deployer.TFPluginClient, vm workloads.VM, network *workloads.ZNet) (workloads.Deployment, error) {
 	dl := workloads.NewDeployment("dl_vpn", network.Nodes[0], network.SolutionType, nil, network.Name, nil, nil, []workloads.VM{vm}, nil)
 	if err := dl.Validate(); err != nil {
-		return workloads.VM{}, err
+		return workloads.Deployment{}, err
 	}
 
 	log.Info().Str("name", vm.Name).Uint32("node_id", dl.NodeID).Msg("deploying vpn server...")
 	if err := client.DeploymentDeployer.Deploy(ctx, &dl); err != nil {
-		return workloads.VM{}, err
+		return workloads.Deployment{}, err
 	}
 
-	deployedVM, err := client.State.LoadVMFromGrid(ctx, dl.NodeID, vm.Name, dl.Name)
+	deployedDl, err := client.State.LoadDeploymentFromGrid(ctx, dl.NodeID, dl.Name)
 	if err != nil {
-		return workloads.VM{}, errors.Wrapf(err, "failed to load vm from node %d", dl.NodeID)
+		return workloads.Deployment{}, errors.Wrapf(err, "failed to load vm from node %d", dl.NodeID)
 	}
 
-	return deployedVM, nil
+	return deployedDl, nil
 }
 
-func buildNetwork(nodeID uint32, projectName string) *workloads.ZNet {
-	return &workloads.ZNet{
+func buildNetwork(nodeID uint32, projectName string) workloads.ZNet {
+	return workloads.ZNet{
 		Name: "vpn",
 		IPRange: gridtypes.NewIPNet(net.IPNet{
 			IP:   net.IPv4(10, 20, 0, 0),
@@ -55,4 +54,20 @@ func buildVM(networkName string) workloads.VM {
 		NetworkName: networkName,
 		PublicIP:    true,
 	}
+}
+
+func rollback(ctx context.Context, client *deployer.TFPluginClient, dl *workloads.Deployment, net *workloads.ZNet, err error) error {
+	log.Info().Msg("an error occurred while deploying, canceling all deployments")
+	log.Info().Msg("canceling network...")
+	if err := client.NetworkDeployer.Cancel(ctx, net); err != nil {
+		return err
+	}
+
+	log.Info().Msg("canceling deployments..")
+	if err := client.DeploymentDeployer.Cancel(ctx, dl); err != nil {
+		return err
+	}
+
+	log.Info().Msg("deployment canceled successfully")
+	return err
 }
