@@ -28,7 +28,7 @@ func Up(ctx context.Context, vpnCfg config.VPNConfig) error {
 		return err
 	}
 
-	network := buildNetwork(nodeID, fmt.Sprintf("%d/%s", client.TwinID, "vpn"))
+	network := buildNetwork(nodeID, fmt.Sprintf("vm/%d/%s", client.TwinID, "vpn"))
 	if err := client.NetworkDeployer.Deploy(ctx, &network); err != nil {
 		return fmt.Errorf("failed to deploy network %w", err)
 	}
