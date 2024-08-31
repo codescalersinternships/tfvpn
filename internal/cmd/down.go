@@ -16,7 +16,7 @@ func Down(ctx context.Context) error {
 	}
 
 	log.Info().Msg("disconnecting from vpn server")
-	projectName := fmt.Sprintf("%d/%s", client.TwinID, "vpn")
+	projectName := fmt.Sprintf("vm/%d/%s", client.TwinID, "vpn")
 
 	err := killShuttle()
 	if err != nil {
