@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// ConnectToVPN attempts to establish a connection to the VPN server.
 func ConnectToVPN(ipAddr string) error {
 	log.Info().Msg("connecting to the vpn server...")
 	cmd := exec.Command("sshuttle", "-r", "root@"+ipAddr, "0.0.0.0/0")
