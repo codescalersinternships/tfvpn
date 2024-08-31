@@ -12,13 +12,13 @@ import (
 // FilterNode filters the available nodes based on the vpn config
 func FilterNode(ctx context.Context, client deployer.TFPluginClient, config config.VPNConfig) (uint32, error) {
 	healthy := true
-	ipv4 := true
+	freeIPs := uint64(1)
 	filter := proxy_types.NodeFilter{
 		Healthy: &healthy,
 		Region:  &config.Region,
 		City:    &config.City,
 		Country: &config.Country,
-		IPv4:    &ipv4,
+		FreeIPs: &freeIPs,
 	}
 
 	nodes, _, err := client.GridProxyClient.Nodes(ctx, filter, proxy_types.Limit{})

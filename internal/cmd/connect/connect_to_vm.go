@@ -3,7 +3,6 @@ package connect
 import (
 	"fmt"
 	"net"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -23,7 +22,7 @@ func ConnectToVM(timeout time.Duration, user, ipAddr string) error {
 	} else {
 		log.Info().Msg("using private key for authentication")
 		var sshDir, privKeyPath string
-		sshDir, err = getUserSSHDir()
+		sshDir, err = GetUserSSHDir()
 		if err != nil {
 			return err
 		}
@@ -41,7 +40,7 @@ func ConnectToVM(timeout time.Duration, user, ipAddr string) error {
 	for {
 		elapsedTime := time.Since(startTime)
 		if elapsedTime >= timeout {
-			return fmt.Errorf("timeout reached while waiting for SSH connection")
+			return fmt.Errorf("timeout reached while waiting for SSH connection %v", err)
 		}
 
 		remainingTime := timeout - elapsedTime
@@ -90,14 +89,4 @@ func verifyHost(host string, remote net.Addr, key ssh.PublicKey) error {
 
 	// Add the new host to known hosts file.
 	return goph.AddKnownHost(host, remote, key, "")
-}
-
-// getUserSSHDir returns the path to the user's SSH directory(e.g. ~/.ssh)
-func getUserSSHDir() (string, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(home, ".ssh"), nil
 }

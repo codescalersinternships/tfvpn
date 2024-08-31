@@ -32,7 +32,11 @@ func Up(ctx context.Context, vpnCfg config.VPNConfig) error {
 	if err := client.NetworkDeployer.Deploy(ctx, &network); err != nil {
 		return fmt.Errorf("failed to deploy network %w", err)
 	}
-	vm := buildVM(network.Name)
+	pubKey, err := getPublicKey()
+	if err != nil {
+		return err
+	}
+	vm := buildVM(network.Name, pubKey)
 	dl, err := deployVM(ctx, &client, vm, &network)
 	if err != nil {
 		if err := rollback(ctx, &client, &dl, &network, err); err != nil {
@@ -45,9 +49,15 @@ func Up(ctx context.Context, vpnCfg config.VPNConfig) error {
 	log.Info().Str("public_ip", ipAddr).Msg("vpn server deployed successfully!")
 
 	if err := connect.ConnectToVM(30*time.Second, "root", ipAddr); err != nil {
+		if err := rollback(ctx, &client, &dl, &network, err); err != nil {
+			return err
+		}
 		return err
 	}
 	if err := connect.ConnectToVPN(ipAddr); err != nil {
+		if err := rollback(ctx, &client, &dl, &network, err); err != nil {
+			return err
+		}
 		return err
 	}
 

@@ -2,8 +2,12 @@ package cmd
 
 import (
 	"context"
+	"io"
 	"net"
+	"os"
+	"path/filepath"
 
+	"github.com/codescalersinternships/tfvpn/internal/cmd/connect"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/threefoldtech/tfgrid-sdk-go/grid-client/deployer"
@@ -43,7 +47,7 @@ func buildNetwork(nodeID uint32, projectName string) workloads.ZNet {
 	}
 }
 
-func buildVM(networkName string) workloads.VM {
+func buildVM(networkName, pubKey string) workloads.VM {
 	return workloads.VM{
 		Name:        "vpn",
 		Flist:       "https://hub.grid.tf/tf-official-apps/threefoldtech-ubuntu-22.04.flist",
@@ -53,7 +57,32 @@ func buildVM(networkName string) workloads.VM {
 		RootfsSize:  15360,
 		NetworkName: networkName,
 		PublicIP:    true,
+		EnvVars: map[string]string{
+			"SSH_KEY": pubKey,
+		},
 	}
+}
+
+func getPublicKey() (string, error) {
+	sshDir, err := connect.GetUserSSHDir()
+	if err != nil {
+		return "", err
+	}
+	pubKeyPath := filepath.Join(sshDir, "id_rsa.pub")
+
+	f, err := os.Open(pubKeyPath)
+	if err != nil {
+		return "", err
+	}
+
+	defer f.Close()
+
+	pubKey, err := io.ReadAll(f)
+	if err != nil {
+		return "", err
+	}
+
+	return string(pubKey), nil
 }
 
 func rollback(ctx context.Context, client *deployer.TFPluginClient, dl *workloads.Deployment, net *workloads.ZNet, err error) error {
@@ -63,7 +92,7 @@ func rollback(ctx context.Context, client *deployer.TFPluginClient, dl *workload
 		return err
 	}
 
-	log.Info().Msg("canceling deployments..")
+	log.Info().Msg("canceling deployment..")
 	if err := client.DeploymentDeployer.Cancel(ctx, dl); err != nil {
 		return err
 	}
