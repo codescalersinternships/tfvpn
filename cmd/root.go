@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Execute runs the root command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal().Err(err).Send()
@@ -21,7 +22,7 @@ var rootCmd = &cobra.Command{
 	Short: "Grid-Compose is a tool for running multi-vm applications on TFGrid defined using a Yaml formatted file.",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		network := os.Getenv("NETWORK")
-		mnemonics := os.Getenv("MNEMONIC")
+		mnemonics := os.Getenv("MNEMONICS")
 		config := config.Config{
 			Mnemonics: mnemonics,
 			Network:   network,

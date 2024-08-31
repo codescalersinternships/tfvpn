@@ -9,13 +9,16 @@ import (
 	proxy_types "github.com/threefoldtech/tfgrid-sdk-go/grid-proxy/pkg/types"
 )
 
+// FilterNode filters the available nodes based on the vpn config
 func FilterNode(ctx context.Context, client deployer.TFPluginClient, config config.VPNConfig) (uint32, error) {
-
+	healthy := true
+	freeIPs := uint64(1)
 	filter := proxy_types.NodeFilter{
-		Status:  []string{"up"},
+		Healthy: &healthy,
 		Region:  &config.Region,
 		City:    &config.City,
 		Country: &config.Country,
+		FreeIPs: &freeIPs,
 	}
 
 	nodes, _, err := client.GridProxyClient.Nodes(ctx, filter, proxy_types.Limit{})

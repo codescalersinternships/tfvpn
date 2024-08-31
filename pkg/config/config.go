@@ -13,6 +13,7 @@ type Config struct {
 	Network   string `json:"network"`
 }
 
+// Validate validates the user configuration
 func (c *Config) Validate() error {
 	if c.Network == "" {
 		c.Network = "dev"
@@ -31,6 +32,7 @@ func (c *Config) Validate() error {
 	return nil
 }
 
+// VPNConfig struct that holds VPN configuration
 type VPNConfig struct {
 	Country string
 	City    string
