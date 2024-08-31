@@ -18,8 +18,8 @@ func Execute() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "grid-compose",
-	Short: "Grid-Compose is a tool for running multi-vm applications on TFGrid defined using a Yaml formatted file.",
+	Use:   "tfvpn",
+	Short: "tfvpn is a tool that instantly connects you to a vpn server located on the threefold grid and tunnels all of your traffic through the server",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		network := os.Getenv("NETWORK")
 		mnemonics := os.Getenv("MNEMONICS")
