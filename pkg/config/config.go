@@ -1,4 +1,4 @@
-// Package config for handling user configuration
+// Package config hosts the configuration needed to connect and disconnect to the vpn server and provides functions for validating user configuration.
 package config
 
 import (

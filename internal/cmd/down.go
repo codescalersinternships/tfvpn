@@ -8,7 +8,10 @@ import (
 	"github.com/threefoldtech/tfgrid-sdk-go/grid-client/deployer"
 )
 
-// Down stops the VPN server
+// Down stops the VPN server. It stops the vpn connection by killing the shuttle process.
+// Then it destroys the vm and the network that has been deployed.
+// It then removes the host from the known hosts file.
+// It returns an error if any of the steps failed.
 func Down(ctx context.Context) error {
 	client, ok := ctx.Value("client").(deployer.TFPluginClient)
 	if !ok {

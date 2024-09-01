@@ -1,3 +1,4 @@
+// Package connect includes functions for establishing SSH connections with remote servers.
 package connect
 
 import (
@@ -12,6 +13,8 @@ import (
 )
 
 // ConnectToVM attempts to establish an SSH connection within the given timeout.
+// It uses the provided user and IP address to connect to the VM.
+// It returns an error if the connection attempt fails.
 func ConnectToVM(timeout time.Duration, user, ipAddr string) error {
 	var auth goph.Auth
 	var err error

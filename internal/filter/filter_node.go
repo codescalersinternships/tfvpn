@@ -1,3 +1,4 @@
+// Package filter provides functions for filtering available nodes based on the VPN configuration.
 package filter
 
 import (

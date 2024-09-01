@@ -13,7 +13,10 @@ import (
 	"github.com/threefoldtech/tfgrid-sdk-go/grid-client/deployer"
 )
 
-// Up deploys the vpn server on the grid and connects to it
+// Up deploys the vpn server on the grid and connects to it.
+// It filters the node based on the vpn config, deploys the network and the vm on the selected node.
+// Then it connects establishes a connection with the deployed vm first and then starts the vpn connection in the background.
+// It returns an error if any of the steps failed and rolls back everything that has been deployed.
 func Up(ctx context.Context, vpnCfg config.VPNConfig) error {
 	if err := installRequirements(); err != nil {
 		return err

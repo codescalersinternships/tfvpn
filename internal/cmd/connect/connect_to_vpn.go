@@ -8,6 +8,8 @@ import (
 )
 
 // ConnectToVPN attempts to establish a connection to the VPN server.
+// It uses the sshuttle command to connect to the VPN server.
+// It returns an error if the connection attempt fails.
 func ConnectToVPN(ipAddr string) error {
 	log.Info().Msg("connecting to the vpn server...")
 	cmd := exec.Command("sshuttle", "-r", "root@"+ipAddr, "0.0.0.0/0")
